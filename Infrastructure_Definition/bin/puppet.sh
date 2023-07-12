@@ -2,23 +2,10 @@
 # Installing Dependencies 
 ebs_device="/dev/xvdf"
 sudo apt-get update -y
-sudo wget https://apt.puppetlabs.com/puppet6-release-focal.deb
-sudo dpkg -i puppet6-release-focal.deb
-sudo apt-get update -y
-sudo apt-get install puppet-agent -y
-sudo systemctl start puppet
-sudo systemctl enable puppet
 sudo apt-get install xfsprogs -y
 sudo apt-get install jq -y
 sudo apt install awscli -y
 sudo apt-get update -y
-wget https://apt.puppetlabs.com/puppet6-release-focal.deb
-sudo dpkg -i puppet6-release-focal.deb
-sudo apt-get update -y
-sleep 5
-sudo apt-get install puppet-agent -y
-sudo systemctl start puppet
-sudo systemctl enable puppet
 sudo mkfs -t ext4 $ebs_device
 splunkdir=/opt/splunk
 logfile=/tmp/logs.txt
@@ -59,11 +46,9 @@ ebs_tag_value="true"
 tags=$(aws ec2 describe-tags --filters "Name=resource-id,Values=$instance_id" --region="$region" | jq '.Tags[]')
 echo "$tags" >> $logfile
 
-# Getting the value of tag role & puppet_env
+# Getting the value of tag role
 role=$(echo "$tags" | jq -r 'select(.Key == "role") .Value')
-puppet_env=$(echo "$tags" | jq -r 'select(.Key == "PuppetEnv") .Value')
 echo "$role" >> $logfile
-echo "$puppet_env" >> $logfile
 
 # Creating the hostname
 hostname="${role//_/-}-${instance_id}"
@@ -74,44 +59,6 @@ sudo hostname "$instance_id"
 
 # Creating DNS and adding in hosts file
 echo "$private_ip $instance_id" | tee --append /etc/hosts
-
-# Master hostname 
-master_hostname="puppetmaster.test.org"
-
-# Fetching instance ID of master node & appending it to /etc/hosts file
-master=$(aws ec2 describe-instances --region "$region" --filters "Name=tag:role,Values=Master" --query 'Reservations[].Instances[?State.Name==`running` || State.Name==`pending`].[PrivateIpAddress]' --output text)
-echo $master $master_hostname | tee --append /etc/hosts
-
-# Fetching Deployer node's IP
-deployer_ip=$(aws ec2 describe-instances --region "$region" --filters "Name=tag:role,Values=DP" --query 'Reservations[].Instances[?State.Name==`running` || State.Name==`pending`].[PrivateIpAddress]' --output text)
-
-# Updating puppet.conf file
-cat > /etc/puppetlabs/puppet/puppet.conf << EOF
-[main]
-certname = $instance_id
-server = puppetmaster.test.org
-environment = $puppet_env
-runinterval = 15m
-EOF
-
-# Restarting the Puppet serice
-sudo systemctl restart puppet
-
-# Create facts.d directory
-facter_dir=/etc/puppetlabs/facter
-facts_d_dir=${facter_dir}/facts.d
-sudo mkdir -p $facts_d_dir
-
-# These facts are needed for Puppet to know which Parameter to target
-cat > $facts_d_dir/instance_facts.yaml << YAML
----
-instance_id: $instance_id
-region: $region
-role: $role
-ec2_availability_zone: $availability_zone
-zone: $availability_zone
-deployer_ip: $deployer_ip
-YAML
 
 # Creating Name tag and attach it to EC2 instance
 aws ec2 create-tags --resources "$instance_id" --region="$region" --tags "Key=Name,Value=$hostname"

@@ -1,4 +1,4 @@
-name: 'Splunk - Production'
+name: 'Infrastructure - Production'
 
 on:
   push:
