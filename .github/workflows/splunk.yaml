@@ -27,7 +27,7 @@ jobs:
           pip install pyhcl
 
       - name: execute lint script 
-        run: python bin/lint.py
+        run: python Infrastructure_Definition/bin/lint.py
     
       - name: Terraform formate
         id: formate
