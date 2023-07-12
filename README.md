@@ -2,6 +2,8 @@
 
 # Production Ready Highly Available Infrastructure on AWS for multiple customers using Terraform Modules
 
-# Connect with me:
+* You just need to create a directory for the stack name & inside that directory create `terraform.tfvars` with the required parameters rest of the things will be managed by automation! 
+
+### Connect with me:
 [![Connect with me on LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/dhruvinksoni/) [![Open My Medium Profile](https://img.shields.io/badge/Medium-Profile-blue?style=for-the-badge&logo=medium)](https://medium.com/@dksoni4530)
 
