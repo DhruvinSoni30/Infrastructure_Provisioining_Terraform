@@ -1,0 +1,38 @@
+properties([ parameters([
+  string( name: 'STACK_NAME', defaultValue: ''),
+]), pipelineTriggers([]) ])
+
+env.stack_name = STACK_NAME
+
+pipeline {
+    agent any
+    tools {
+        terraform 'terraform'
+    }
+    stages{
+        
+        stage('Git Checkout'){
+            steps{
+                git branch: 'main', credentialsId: 'cred', url: 'https://github.com/DhruvinSoni30/Infrastructure_Provisioing_Terraform'
+            }
+        }
+        
+        stage('Fetching code'){
+            steps{
+                sh "cd '/Users/dhruvins/Desktop/Infrastructure_Provisioing_Terraform/Stack_Definition/${env.stack_name}' && aws s3 cp s3://stack-definition . --recursive"
+            }
+        }
+
+        stage('Terraform destroy'){
+            steps{
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws',
+                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]){
+                        sh "cd '/Users/dhruvins/Desktop/Infrastructure_Provisioing_Terraform/Stack_Definition/${env.stack_name}' && terraform destroy -auto-approve"
+                    }
+            }
+        }
+    }
+}

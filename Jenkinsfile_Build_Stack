@@ -1,0 +1,69 @@
+properties([ parameters([
+  string( name: 'STACK_NAME', defaultValue: ''),
+]), pipelineTriggers([]) ])
+
+env.stack_name = STACK_NAME
+
+pipeline {
+    agent any
+    tools {
+        terraform 'terraform'
+    }
+    stages{
+        
+        stage('Git Checkout'){
+            steps{
+                git branch: 'main', credentialsId: 'cred', url: 'https://github.com/DhruvinSoni30/Infrastructure_Provisioing_Terraform'
+            }
+        }
+        
+        stage('Fetching code'){
+            steps{
+                sh "cd '${env.stack_name}' && aws s3 cp s3://stack-definition . --recursive"
+            }
+        }
+
+        stage('Terraform init'){
+            steps{
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws',
+                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]){
+                        sh "cd '${env.stack_name}' terraform init"
+                    }
+            }
+        }
+    
+        stage('Terraform plan'){
+            steps{
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws',
+                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]){
+                        sh "cd '${env.stack_name}' terraform plan -out myplan"
+                    }
+            }
+        }
+        stage('Approval') {
+            steps {
+                script {
+                    def userInput = input(id: 'confirm', message: 'Apply Terraform?', parameters: [ [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Apply terraform', name: 'confirm'] ])
+                }
+            }
+        }
+
+        stage('Terraform Apply'){
+            steps{
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws',
+                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]){
+                        sh "cd '${env.stack_name}' terraform apply -input=false myplan"
+                    }
+            }
+        }
+    }
+}
