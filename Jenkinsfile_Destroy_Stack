@@ -19,7 +19,7 @@ pipeline {
         
         stage('Fetching code'){
             steps{
-                sh "cd '/Users/dhruvins/Desktop/Infrastructure_Provisioing_Terraform/Stack_Definition/${env.stack_name}' && aws s3 cp s3://stack-definition . --recursive"
+                sh "cd '/Users/dhruvins/Desktop/Infrastructure_Provisioining_Terraform/Stack_Definition/${env.stack_name}' && aws s3 cp s3://stack-definition . --recursive"
             }
         }
 
@@ -30,7 +30,7 @@ pipeline {
                     credentialsId: 'aws',
                     accessKeyVariable: 'AWS_ACCESS_KEY_ID',
                     secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]){
-                        sh "cd '/Users/dhruvins/Desktop/Infrastructure_Provisioing_Terraform/Stack_Definition/${env.stack_name}' && terraform destroy -auto-approve"
+                        sh "cd '/Users/dhruvins/Desktop/Infrastructure_Provisioining_Terraform/Stack_Definition/${env.stack_name}' && terraform destroy -auto-approve"
                     }
             }
         }
