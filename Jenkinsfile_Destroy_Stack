@@ -13,7 +13,7 @@ pipeline {
         
         stage('Git Checkout'){
             steps{
-                git branch: 'main', credentialsId: 'cred', url: 'https://github.com/DhruvinSoni30/Infrastructure_Provisioing_Terraform'
+                git branch: 'main', credentialsId: 'cred', url: 'https://github.com/DhruvinSoni30/Infrastructure_Provisioining_Terraform'
             }
         }
         
