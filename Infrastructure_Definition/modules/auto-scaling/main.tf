@@ -1,4 +1,4 @@
-# Using Data Source to get all Avalablility Zones in Region
+# Using Data Source to get all Avalablility Zones in the Region
 data "aws_availability_zones" "available_zones" {}
 
 # Fetching Ubuntu 20.04 AMI ID
@@ -18,7 +18,7 @@ data "aws_ami" "amazon_linux_2" {
   owners = ["099720109477"]
 }
 
-# Create Launch Template for Master Node
+# Creating Launch Template for Master Node
 resource "aws_launch_template" "master-custom-launch-template" {
   name                    = "${var.project_name}-master-config"
   image_id                = data.aws_ami.amazon_linux_2.id
@@ -38,7 +38,7 @@ resource "aws_launch_template" "master-custom-launch-template" {
   }
 }
 
-# Create Auto Scalling Group for Master Node
+# Creating Auto Scaling Group for Master Node
 resource "aws_autoscaling_group" "master-custom-autoscaling-group" {
   name                = "${var.project_name}-master-auto-scalling-group"
   vpc_zone_identifier = [var.public_subnet_az1_id]
@@ -62,7 +62,7 @@ resource "aws_autoscaling_group" "master-custom-autoscaling-group" {
   }
 }
 
-# Create Launch Template for IDX
+# Creating Launch Template for IDX
 resource "aws_launch_template" "idx-custom-launch-template" {
   name                    = "${var.project_name}-idx-config"
   image_id                = data.aws_ami.amazon_linux_2.id
@@ -82,7 +82,7 @@ resource "aws_launch_template" "idx-custom-launch-template" {
   }
 }
 
-# Create Auto Scalling group for IDX
+# Creating Auto Scaling group for IDX
 resource "aws_autoscaling_group" "idx-custom-autoscaling-group" {
   name                = "${var.project_name}-idx-auto-scalling-group"
   vpc_zone_identifier = [var.public_subnet_az1_id, var.public_subnet_az2_id, var.public_subnet_az3_id]
@@ -112,7 +112,7 @@ resource "aws_autoscaling_group" "idx-custom-autoscaling-group" {
   }
 }
 
-# Create Launch Template for SH
+# Creating Launch Template for SH
 resource "aws_launch_template" "sh-custom-launch-template" {
   name                    = "${var.project_name}-sh-config"
   image_id                = data.aws_ami.amazon_linux_2.id
@@ -132,7 +132,7 @@ resource "aws_launch_template" "sh-custom-launch-template" {
   }
 }
 
-# Create Auto Scalling group for SH
+# Creating Auto Scaling group for SH
 resource "aws_autoscaling_group" "sh-custom-autoscaling-group" {
   name                = "${var.project_name}-sh-auto-scalling-group"
   vpc_zone_identifier = [var.public_subnet_az1_id]
@@ -161,7 +161,7 @@ resource "aws_autoscaling_group" "sh-custom-autoscaling-group" {
   }
 }
 
-# Create Launch Template for HF
+# Creating Launch Template for HF
 resource "aws_launch_template" "hf-custom-launch-template" {
   name                    = "${var.project_name}-hf-config"
   image_id                = data.aws_ami.amazon_linux_2.id
@@ -181,7 +181,7 @@ resource "aws_launch_template" "hf-custom-launch-template" {
   }
 }
 
-# Create Auto Scalling group for HF
+# Creating Auto Scalling group for HF
 resource "aws_autoscaling_group" "hf-custom-autoscaling-group" {
   name                = "${var.project_name}-hf-auto-scalling-group"
   vpc_zone_identifier = [var.public_subnet_az2_id]
@@ -210,7 +210,7 @@ resource "aws_autoscaling_group" "hf-custom-autoscaling-group" {
   }
 }
 
-# Create Launch Template for DP
+# Creating Launch Template for DP
 resource "aws_launch_template" "dp-custom-launch-template" {
   name                    = "${var.project_name}-dp-config"
   image_id                = data.aws_ami.amazon_linux_2.id
@@ -230,7 +230,7 @@ resource "aws_launch_template" "dp-custom-launch-template" {
   }
 }
 
-# Create Auto Scalling group for DP
+# Creating Auto Scalling group for DP
 resource "aws_autoscaling_group" "dp-custom-autoscaling-group" {
   name                = "${var.project_name}-dp-auto-scalling-group"
   vpc_zone_identifier = [var.public_subnet_az3_id]
@@ -310,7 +310,7 @@ resource "aws_iam_role_policy" "dlm_lifecycle" {
   policy = data.aws_iam_policy_document.dlm_lifecycle.json
 }
 
-# IAM policy for Snapshot Creation 
+# IAM policy for Snapshot Creation that will remain for 14 days 
 resource "aws_dlm_lifecycle_policy" "example" {
   description        = "example DLM lifecycle policy"
   execution_role_arn = aws_iam_role.dlm_lifecycle_role.arn
@@ -348,7 +348,7 @@ resource "aws_dlm_lifecycle_policy" "example" {
   }
 }
 
-# AWS EIP for Indexers
+# Creating EIPs for Indexers
 resource "aws_eip" "idx-eips" {
   count = aws_autoscaling_group.idx-custom-autoscaling-group.desired_capacity
   domain = "vpc"
@@ -360,7 +360,7 @@ resource "aws_eip" "idx-eips" {
   }
 }
 
-# AWS EIP for Search Head
+# Creating EIP for Search Head
 resource "aws_eip" "sh-eip" {
   domain = "vpc"
   lifecycle {
@@ -371,7 +371,7 @@ resource "aws_eip" "sh-eip" {
   }
 }
 
-# AWS EIP for Deployer
+# Creating EIP for Deployer
 resource "aws_eip" "dp-eip" {
   domain = "vpc"
   lifecycle {
@@ -396,7 +396,7 @@ data "aws_instance" "sh_instance" {
   depends_on = [aws_autoscaling_group.sh-custom-autoscaling-group]
 }
 
-# Associate EIP to Search Head
+# Associating EIP to Search Head
 resource "aws_eip_association" "sh_eip_association" {
   instance_id         = data.aws_instance.sh_instance.id
   allocation_id       = aws_eip.sh-eip.id
@@ -431,7 +431,7 @@ data "aws_instance" "dp_instance" {
   depends_on = [aws_autoscaling_group.dp-custom-autoscaling-group]
 }
 
-# Associate EIP to Deployer
+# Associating EIP to Deployer
 resource "aws_eip_association" "dp_eip_association" {
   instance_id         = data.aws_instance.dp_instance.id
   allocation_id       = aws_eip.dp-eip.id
@@ -457,9 +457,7 @@ data "aws_instances" "idx_instance" {
   depends_on = [aws_autoscaling_group.idx-custom-autoscaling-group]
 }
 
-
-
-# Associate EIP to Indexers
+# Associating EIP to Indexers
 resource "aws_eip_association" "idx_eip_association" {
   count               = var.idx_desired_capacity
   instance_id         = data.aws_instances.idx_instance.ids[count.index]
@@ -480,7 +478,7 @@ data "aws_instance" "hf_instance" {
   depends_on = [aws_autoscaling_group.hf-custom-autoscaling-group]
 }
 
-# Create EBS volume for Search Head
+# Creating EBS volume for Search Head
 resource "aws_ebs_volume" "sh-volume" {
   availability_zone = data.aws_availability_zones.available_zones.names[0]
   size              = var.sh_volume_size
@@ -491,7 +489,7 @@ resource "aws_ebs_volume" "sh-volume" {
   }
 }
 
-# Attach volume to Search Head
+# Attaching volume to Search Head
 resource "aws_volume_attachment" "ebs_sh" {
   device_name  = "/dev/sdf"
   volume_id    = aws_ebs_volume.sh-volume.id
@@ -499,7 +497,7 @@ resource "aws_volume_attachment" "ebs_sh" {
   force_detach = true
 }
 
-# Create EBS volume for Master Node
+# Creating EBS volume for Master Node
 resource "aws_ebs_volume" "master-volume" {
   availability_zone = data.aws_availability_zones.available_zones.names[0]
   size              = var.master_volume_size
@@ -510,7 +508,7 @@ resource "aws_ebs_volume" "master-volume" {
   }
 }
 
-# Attach volume to Master Node
+# Attaching volume to Master Node
 resource "aws_volume_attachment" "ebs_master" {
   device_name  = "/dev/sdf"
   volume_id    = aws_ebs_volume.master-volume.id
@@ -519,7 +517,7 @@ resource "aws_volume_attachment" "ebs_master" {
 }
 
 
-# Create EBS volume for Forwarder
+# Creating EBS volume for Forwarder
 resource "aws_ebs_volume" "hf-volume" {
   availability_zone = data.aws_availability_zones.available_zones.names[1]
   size              = var.hf_volume_size
@@ -530,7 +528,7 @@ resource "aws_ebs_volume" "hf-volume" {
   }
 }
 
-# Attach volume to Forwarder
+# Attaching volume to Forwarder
 resource "aws_volume_attachment" "ebs_hf" {
   device_name  = "/dev/sdf"
   volume_id    = aws_ebs_volume.hf-volume.id
@@ -538,7 +536,7 @@ resource "aws_volume_attachment" "ebs_hf" {
   force_detach = true
 }
 
-# Create EBS volume for Deployer
+# Creating EBS volume for Deployer
 resource "aws_ebs_volume" "dp-volume" {
   availability_zone = data.aws_availability_zones.available_zones.names[2]
   size              = var.dp_volume_size
@@ -549,7 +547,7 @@ resource "aws_ebs_volume" "dp-volume" {
   }
 }
 
-# Attach volume to Deployer
+# Attaching volume to Deployer
 resource "aws_volume_attachment" "ebs_dp" {
   device_name  = "/dev/sdf"
   volume_id    = aws_ebs_volume.dp-volume.id
@@ -557,7 +555,7 @@ resource "aws_volume_attachment" "ebs_dp" {
   force_detach = true
 }
 
-# Create volume for Indexers
+# Creating volume for Indexers
 resource "aws_ebs_volume" "idx-volume" {
   count             = var.idx_desired_capacity
   availability_zone = data.aws_availability_zones.available_zones.names[count.index]
@@ -569,7 +567,7 @@ resource "aws_ebs_volume" "idx-volume" {
   }
 }
 
-# Attach volume to Indexers
+# Attaching volume to Indexers
 resource "aws_volume_attachment" "ebs_idx" {
   count        = var.idx_desired_capacity
   device_name  = "/dev/sdf"

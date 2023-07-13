@@ -19,19 +19,19 @@ variable "vpc_cidr" {
   default = "10.0.0.0/16"
 }
 
-# CIDR of public subet in az1 
+# CIDR of public subet in AZ1 
 variable "public_subnet_az1_cidr" {
   type    = string
   default = "10.0.1.0/24"
 }
 
-# CIDR of public subet in az2
+# CIDR of public subet in AZ2
 variable "public_subnet_az2_cidr" {
   type    = string
   default = "10.0.2.0/24"
 }
 
-# CIDR of public subet in az3
+# CIDR of public subet in AZ3
 variable "public_subnet_az3_cidr" {
   type    = string
   default = "10.0.3.0/24"

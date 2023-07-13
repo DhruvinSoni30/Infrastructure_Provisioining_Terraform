@@ -1,4 +1,4 @@
-# Create VPC
+# Creating VPC
 resource "aws_vpc" "splunk_vpc" {
   cidr_block           = var.vpc_cidr
   instance_tenancy     = "default"
@@ -11,7 +11,7 @@ resource "aws_vpc" "splunk_vpc" {
   }
 }
 
-# Create Internet Gateway and attach it to VPC
+# Creating Internet Gateway and attach it to VPC
 resource "aws_internet_gateway" "splunk_internet_gateway" {
   vpc_id = aws_vpc.splunk_vpc.id
 
@@ -25,7 +25,7 @@ resource "aws_internet_gateway" "splunk_internet_gateway" {
 # Using data source to get all Avalablility Zones in region
 data "aws_availability_zones" "available_zones" {}
 
-# Create Public Subnet AZ1
+# Creating Public Subnet in AZ1
 resource "aws_subnet" "public_subnet_az1" {
   vpc_id                  = aws_vpc.splunk_vpc.id
   cidr_block              = var.public_subnet_az1_cidr
@@ -39,7 +39,7 @@ resource "aws_subnet" "public_subnet_az1" {
   }
 }
 
-# Create Public Subnet AZ2
+# Creating Public Subnet in AZ2
 resource "aws_subnet" "public_subnet_az2" {
   vpc_id                  = aws_vpc.splunk_vpc.id
   cidr_block              = var.public_subnet_az2_cidr
@@ -53,7 +53,7 @@ resource "aws_subnet" "public_subnet_az2" {
   }
 }
 
-# Create Public Subnet AZ3
+# Creating Public Subnet in AZ3
 resource "aws_subnet" "public_subnet_az3" {
   vpc_id                  = aws_vpc.splunk_vpc.id
   cidr_block              = var.public_subnet_az3_cidr
@@ -67,7 +67,7 @@ resource "aws_subnet" "public_subnet_az3" {
   }
 }
 
-# Create Route Table and add Public Route
+# Creating Route Table and add Public Route
 resource "aws_route_table" "public_route_table" {
   vpc_id = aws_vpc.splunk_vpc.id
 
@@ -83,19 +83,19 @@ resource "aws_route_table" "public_route_table" {
   }
 }
 
-# Associate Public Subnet in AZ1 to route table
+# Associating Public Subnet in AZ1 to route table
 resource "aws_route_table_association" "public_subnet_az1_route_table_association" {
   subnet_id      = aws_subnet.public_subnet_az1.id
   route_table_id = aws_route_table.public_route_table.id
 }
 
-# Associate Public Subnet in AZ2 to route table
+# Associating Public Subnet in AZ2 to route table
 resource "aws_route_table_association" "public_subnet_az2_route_table_association" {
   subnet_id      = aws_subnet.public_subnet_az2.id
   route_table_id = aws_route_table.public_route_table.id
 }
 
-# Associate Public Subnet in AZ3 to route table
+# Associating Public Subnet in AZ3 to route table
 resource "aws_route_table_association" "public_subnet_az3_route_table_association" {
   subnet_id      = aws_subnet.public_subnet_az3.id
   route_table_id = aws_route_table.public_route_table.id
