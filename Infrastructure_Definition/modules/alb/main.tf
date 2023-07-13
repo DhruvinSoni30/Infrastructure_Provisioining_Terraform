@@ -15,7 +15,7 @@ resource "aws_lb" "application_load_balancer" {
   }
 }
 
-# Create Listener
+# Create Listener that will listen on port 8000
 resource "aws_lb_listener" "application_load_balancer_listener" {
   load_balancer_arn = aws_lb.application_load_balancer.arn
   port              = 8000

@@ -76,10 +76,10 @@ variable "dp_desired_capacity" {
   type = number
 }
 
-# Indexers security group
+# Indexers security Group
 variable "alb_security_group" {}
 
-# Master security group
+# Master Security Group
 variable "master_security_group" {}
 
 # Stack name

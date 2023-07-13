@@ -1,4 +1,4 @@
-# Create Security Group for the Indexers
+# Creating Security Group for the Indexers
 resource "aws_security_group" "alb_security_group" {
   name   = "alb security group"
   vpc_id = var.vpc_id
@@ -82,7 +82,7 @@ resource "aws_security_group" "alb_security_group" {
   }
 }
 
-# Create Security Group for the Search Head 
+# Creating Security Group for the Search Head 
 resource "aws_security_group" "sh_security_group" {
   name   = "SH security group"
   vpc_id = var.vpc_id
@@ -142,7 +142,7 @@ resource "aws_security_group" "sh_security_group" {
   }
 }
 
-# Create Security Group for the Forwarder
+# Creating Security Group for the Forwarder
 resource "aws_security_group" "hf_security_group" {
   name   = "HF security group"
   vpc_id = var.vpc_id
@@ -202,7 +202,7 @@ resource "aws_security_group" "hf_security_group" {
   }
 }
 
-# Create Security Group for the Deployer 
+# Creating Security Group for the Deployer 
 resource "aws_security_group" "dp_security_group" {
   name   = "DP security group"
   vpc_id = var.vpc_id
@@ -262,7 +262,7 @@ resource "aws_security_group" "dp_security_group" {
   }
 }
 
-# Create Security Group for the Master Node
+# Creating Security Group for the Master Node
 resource "aws_security_group" "master_security_group" {
   name   = "Master security group"
   vpc_id = var.vpc_id

@@ -13,22 +13,22 @@ variable "project_name" {
   type = string
 }
 
-# Security group for alb
+# Security group for ALB
 variable "alb_security_group" {
   type = string
 }
 
-# ID of public subnet in az1 
+# ID of public subnet in AZ1 
 variable "public_subnet_az1_id" {
   type = string
 }
 
-# ID of public subnet in az2
+# ID of public subnet in AZ2
 variable "public_subnet_az2_id" {
   type = string
 }
 
-# ID of pblic subnet in az3
+# ID of pblic subnet in AZ3
 variable "public_subnet_az3_id" {
   type = string
 }
@@ -38,7 +38,7 @@ variable "vpc_id" {
   type = string
 }
 
-# Healthcheck
+# Healthcheck will be done on port 8000
 variable "health_check" {
   type = map(string)
   default = {

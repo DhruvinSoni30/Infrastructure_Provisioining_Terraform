@@ -1,4 +1,4 @@
-# Create IAM Admin Policy
+# Creating IAM Admin Policy
 resource "aws_iam_policy" "admin_policy" {
   name        = "AdminPolicy"
   description = "Administrative access for all services"
@@ -17,7 +17,7 @@ resource "aws_iam_policy" "admin_policy" {
 EOF
 }
 
-# Create IAM Admin Role
+# Creating IAM Admin Role
 resource "aws_iam_role" "admin_role" {
   name               = "admin-role"
   assume_role_policy = <<EOF
